@@ -8,10 +8,7 @@ def mainCharacters(string):
 		string -- guion completo de la pelicula
 
 	"""
-	automata = re.compile("(?<=-)[A-Z ]*(?=:)",re.MULTILINE)
-	chars = list(set(automata.findall(string)))
-	chars.sort()
-	return chars
+	return sorted(list(set(re.compile("(?<=-)[A-Z ]*(?=:)",re.MULTILINE).findall(string))))
 
 def dialogs(string,characters):
 	""" Genera un diccionario (personaje : lista de dialogos)
@@ -20,12 +17,7 @@ def dialogs(string,characters):
 		characters -- lista de strings de personajes
 
 	"""
-	d = dict()
-	for char in characters:
-		automata = re.compile("(?<=-"+char+": ).*$",re.MULTILINE)
-		d[char]=automata.findall(string)
-	return d
-
+	return dict((char,re.compile("(?<=-"+char+": ).*$",re.MULTILINE).findall(string)) for char in characters)
     
 string = modulo.leer_archivo()
 
@@ -54,5 +46,7 @@ m = min(d)
 print "Personaje con menos dialogos: %s" % (m)
 
 p = raw_input("Nombre de personaje a buscar con quien interactua: ")
+while p not in characters:
+	p=raw_input("Personaje invalido, ingrese nuevamente: ")
 interacciones = modulo.dialogos(p,string)
 
